@@ -1,0 +1,31 @@
+Quantities:
+	a = asking price for selling stocks
+	b = bid price for buying stocks
+
+Input:
+	("sell", q, a)
+	("buy", q, b)
+	
+A transaction takes place between a ("sell", q1, a) and a ("buy", q2, b) if a <=b
+min(q1, q2) number of stocks sold for price a
+
+Market Equilibrium: The price of all sell orders exceeds the price pf all buy orders.
+
+Market State: The set of all unprocessed sell orders and buy orders
+
+If the market is in equilibrium and there are no more orders in the input stream, end the program.
+Report any pending orders.
+
+----------------------------------------------------------------------------------
+
+Sell orders are stored in minPQ
+Buy orders are stored in maxPQ
+
+Transaction extracts the root of both lists and processes them.
+
+Function: make_trades
+	Parameters:
+		minPQ sell_orders
+		maxPQ buy_orders
+		
+	Return: An array of Transactions
