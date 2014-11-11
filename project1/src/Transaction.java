@@ -6,7 +6,19 @@
  * Transaction.java
  */
 
-public class Transaction 
-{
+public class Transaction {
+	private int price;
+	private int quant;
+
+	public Transaction(int price, int quant) {
+		this.price = price;
+		this.quant = quant;
+	}
+
+	@Override
+	public String toString() {
+		return "(" + Integer.toString(price) + ", " + Integer.toString(quant)
+				+ ")";
+	}
 
 }

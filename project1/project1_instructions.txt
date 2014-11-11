@@ -1,15 +1,16 @@
 Quantities:
 	a = asking price for selling stocks
 	b = bid price for buying stocks
+	q = number of stocks
 
 Input:
-	("sell", q, a)
-	("buy", q, b)
+	("sell", a, q)
+	("buy", b, q)
 	
-A transaction takes place between a ("sell", q1, a) and a ("buy", q2, b) if a <=b
+A transaction takes place between a ("sell", a, q1) and a ("buy", b, q2) if a <=b
 min(q1, q2) number of stocks sold for price a
 
-Market Equilibrium: The price of all sell orders exceeds the price pf all buy orders.
+Market Equilibrium: The price of all sell orders exceeds the price of all buy orders.
 
 Market State: The set of all unprocessed sell orders and buy orders
 

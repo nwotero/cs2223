@@ -6,7 +6,43 @@
  * Bid.java
  */
 
-public class Bid 
-{
+public class Bid {
+	private String type;
+	private int price;
+	private int quant;
 
+	public Bid(String type, int price, int quant) {
+		this.type = type;
+		this.price = price;
+		this.quant = quant;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public int getPrice() {
+		return price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
+
+	public int getQuant() {
+		return quant;
+	}
+
+	public void setQuant(int quant) {
+		this.quant = quant;
+	}
+
+	public String toString() {
+		return "(" + type + ", " + Integer.toString(price) + ", "
+				+ Integer.toString(quant) + ")";
+	}
 }
