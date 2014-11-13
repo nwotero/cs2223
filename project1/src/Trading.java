@@ -18,8 +18,8 @@ public class Trading {
 	List<Transaction> sales;
 
 	private Trading(String[] orders) {
-		sellOrders = new PriorityQueue<Bid>(20, Collections.reverseOrder()); // maxPQ
-		buyOrders = new PriorityQueue<Bid>(20); // minPQ
+		buyOrders = new PriorityQueue<Bid>(20, Collections.reverseOrder()); // maxPQ
+		sellOrders = new PriorityQueue<Bid>(20); // minPQ
 		sales = new ArrayList<Transaction>(50);
 
 		for (String bid : orders) {
@@ -39,7 +39,7 @@ public class Trading {
 						+ newBid.getType());
 				return;
 			}
-
+			System.out.println(buyOrders.toString());
 			processMarket();
 		}
 		
@@ -92,12 +92,12 @@ public class Trading {
 				
 				int quant = biddingQuant;
 				if (biddingQuant < askingQuant){
-					sellOrder.setQuant(askingPrice - quant);
+					sellOrder.setQuant(askingQuant - quant);
 					sellOrders.add(sellOrder);
 				}
 				else if (biddingQuant > askingQuant){
 					quant = askingQuant;
-					buyOrder.setQuant(biddingPrice - quant);
+					buyOrder.setQuant(biddingQuant - quant);
 					buyOrders.add(buyOrder);
 				}
 				sales.add(new Transaction(askingPrice, quant));
@@ -109,8 +109,8 @@ public class Trading {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(Arrays.toString(args));
-		new Trading(args);
+		String[] inputLines = StdIn.readAllLines();
+		new Trading(inputLines);
 	}
 
 }

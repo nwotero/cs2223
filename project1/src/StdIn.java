@@ -361,7 +361,3 @@ public final class StdIn {
     }
 
 }
-
-
-//Copyright © 2000–2011, Robert Sedgewick and Kevin Wayne. 
-//Last updated: Sat Jan 4 22:47:56 EST 2014.

@@ -6,7 +6,7 @@
  * Bid.java
  */
 
-public class Bid {
+public class Bid implements Comparable<Bid>{
 	private String type;
 	private int price;
 	private int quant;
@@ -44,5 +44,17 @@ public class Bid {
 	public String toString() {
 		return "(" + type + ", " + Integer.toString(price) + ", "
 				+ Integer.toString(quant) + ")";
+	}
+
+	@Override
+	public int compareTo(Bid that) {
+		if (this.getPrice() > that.getPrice()){
+			return 1;
+		}
+		else if (this.getPrice() < that.getPrice()){
+			return -1;
+		} else {
+			return 0;
+		}
 	}
 }
