@@ -6,19 +6,23 @@
  * Transaction.java
  */
 
+//This class models a transactions made on the Stock Market.
+//Each transaction consists of the number and price of the shares sold.
 public class Transaction {
-	private int price;
-	private int quant;
+ private int price;
+ private int quant;
 
-	public Transaction(int price, int quant) {
-		this.price = price;
-		this.quant = quant;
-	}
+ //Cronstructor for the class Transaction
+ public Transaction(int price, int quant) {
+  this.price = price;
+  this.quant = quant;
+ }
 
-	@Override
-	public String toString() {
-		return "(" + Integer.toString(price) + ", " + Integer.toString(quant)
-				+ ")";
-	}
+ //This method prints out the information for a transaction in the form (price,quantity).
+ @Override
+ public String toString() {
+  return "(" + Integer.toString(price) + ", " + Integer.toString(quant)
+    + ")";
+ }
 
 }
