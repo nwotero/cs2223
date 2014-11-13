@@ -1,0 +1,6 @@
+buy 10 10
+buy 6 20
+sell 8 15
+buy 9 12
+sell 10 20
+sell 9 16
