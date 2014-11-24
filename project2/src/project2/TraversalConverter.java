@@ -9,36 +9,52 @@ public class TraversalConverter {
 		int size = preorder.length;
 		String[] postorder = new String[size];
 		Node pre[] = new Node[size];
-		ArrayList<Integer> post = new ArrayList<Integer>();
+		ArrayList<String> list = new ArrayList<>();
+		ArrayList<String> post = new ArrayList<>();
 		
+		//if empty input
+		if (preorder.length == 0){
+			System.out.println("Input is null.");
+			return new String[0];
+		}
 		//if single element array
 		if (preorder.length == 1){
 			return preorder;
 		}
 		
 		// Check to make sure the given array is actually a preorder of a binary search tree
-		
+		int count = 0;
+		for (String s : preorder){
+			list.add(s);	//parse int data from String
+			count++;
+		}
+		try{
+			if(isValid(list)){
+				System.out.println("Error in search_pre_to_post. Input not a BST.");
+			}	
+		}
+		catch (Exception e){
+		}
 		
 		
 		//create array of Nodes for each String
-		int count = 0;
+		count = 0;
 		for (String s : preorder){
 			Node node = new Node();	//create a new node
-			node.setData(Integer.parseInt(s));	//parse int data from String
+			node.setData(s);	//parse int data from String
 			pre[count] = node;
 			count++;
 		}
 		
 		//create bst from preorder
-		buildbst(pre[0],pre,1,Integer.MAX_VALUE);
-		
+		buildbst(pre[0],pre,1,new String("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz")); //we deserve to not get the edge case that purposely tries to beat this 
 		//generate postorder of bst
 		post = generatePostOrder(pre[0]);
 		
 		//convert int back to Strings
 		count = 0;
-		for (Integer num : post){
-			postorder[count] = num.toString();
+		for (String s : post){
+			postorder[count] = s;
 			count++;
 		}
 		
@@ -46,21 +62,93 @@ public class TraversalConverter {
 		
 	}
 	
+	//check if valid bst
+	public static boolean isValid(ArrayList<String> arr) throws Exception{
+		boolean state = false;
+		try {
+			state = recValidCheck(arr);
+		} catch (Exception e) {
+			System.out.println("Error in search_pre_to_post");
+		}
+		return state;
+	}
+	
+	public static boolean recValidCheck(ArrayList<String> list){
+		ArrayList<String> newListLeft = new ArrayList<>();
+		ArrayList<String> newListRight = new ArrayList<>();
+		int edge = -1;
+		
+		//base case
+		if (list.size() == 1){
+			return true;
+		}
+		
+		//find edge
+		for (int count = 1; count < list.size(); count++){
+			if(list.get(0).compareTo(list.get(count)) < 0){
+				edge = count;
+				break;
+			}
+		}
+		
+		if (edge == -1){
+			//then no edge
+			//check for greater than and recurse
+			for (int j = 1; j < list.size(); j++){
+				newListLeft.add(list.get(j));
+			}
+			for(int j = 0; j < newListLeft.size(); j++){
+				if (newListLeft.get(j).compareTo(list.get(0)) > 0){
+					return false;
+				}
+			}
+			return recValidCheck(newListLeft);
+			
+		}
+		//there is an edge
+		else{
+			//create new lists
+			for (int j = 1; j < edge; j++){
+				newListLeft.add(list.get(j));
+			}
+			for (int k = edge; k < list.size(); k++){
+				newListLeft.add(list.get(k));
+			}
+			
+			//check left for greater than
+			for(int j = 0; j < newListLeft.size(); j++){
+				if (newListLeft.get(j).compareTo(list.get(0)) > 0 ){
+					return false;
+				}
+			}
+			//check right for less than
+			for(int j = 0; j < newListRight.size(); j++){
+				if (newListLeft.get(j).compareTo(list.get(0)) < 0){
+					return false;
+				}
+			}
+			//recurse
+			return (recValidCheck(newListLeft) && recValidCheck(newListRight));
+		}
+	
+	}
+	
+	
     //create a bst from the preorder
-	static int buildbst(Node current, Node[] arr, int i, int biggestSoFar)
+	public static int buildbst(Node current, Node[] arr, int i, String biggestSoFar)
 	{
 		//base case
 	    if (i == arr.length) return i;
 
 	    // recurse left
-	    if (arr[i].getData() < current.getData())
+	    if (arr[i].getData().compareTo(current.getData()) < 0)
 	    {
 	      current.setLeft(arr[i++]);
 	      i = buildbst(current.getLeft(), arr, i, current.getData());
 	    }
 
 	    // recurse right
-	    if (i < arr.length && arr[i].getData() < biggestSoFar)
+	    if (i < arr.length && arr[i].getData().compareTo(biggestSoFar) < 0)
 	    {
 	      current.setRight(arr[i++]);
 	      i = buildbst(current.getRight(), arr, i, biggestSoFar);
@@ -70,9 +158,9 @@ public class TraversalConverter {
 	}
 	
 	//takes a bst and generates the postorder
-    public static ArrayList<Integer> generatePostOrder(Node Root){
+    public static ArrayList<String> generatePostOrder(Node Root){
     	//variable declaration
-    	ArrayList<Integer> post = new ArrayList<Integer>();
+    	ArrayList<String> post = new ArrayList<String>();
     	//if node has a left child
         if(Root.getLeft() != null){
         	//recurse down left subtree

@@ -3,7 +3,7 @@ package project2;
 public class Node {
 	private Node left = null;
 	private Node right = null;
-	private int data;
+	private String data;
 
 	//get the left child
 	public Node getLeft() {
@@ -26,12 +26,12 @@ public class Node {
 	}
 
 	//get the data
-	public int getData() {
+	public String getData() {
 		return data;
 	}
 
 	//set the data
-	public void setData(int data) {
+	public void setData(String data) {
 		this.data = data;
 	}
 }
