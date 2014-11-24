@@ -59,8 +59,9 @@ public class TraversalConverterTest extends TestCase {
 	public void test_pre_post_to_in() {
 		String[] pre = {"a","b","c"};
 		String[] post = {"b","c","a"};
+		String[] in = {"b", "a", "c"};
 		String[] test = TraversalConverter.pre_post_to_in(pre, post);
-		assertArrayEquals(post, test);
+		assertArrayEquals(in, test);
 	}
 	
 	@Test
