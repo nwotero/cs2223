@@ -12,6 +12,11 @@ public class TraversalConverter {
 		ArrayList<Integer> list = new ArrayList<Integer>();
 		ArrayList<Integer> post = new ArrayList<Integer>();
 		
+		//if empty input
+		if (preorder.length == 0){
+			System.out.println("Input is null.");
+			return new String[0];
+		}
 		//if single element array
 		if (preorder.length == 1){
 			return preorder;
