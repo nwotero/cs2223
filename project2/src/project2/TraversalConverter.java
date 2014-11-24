@@ -9,6 +9,7 @@ public class TraversalConverter {
 		int size = preorder.length;
 		String[] postorder = new String[size];
 		Node pre[] = new Node[size];
+		ArrayList<Integer> list = new ArrayList<Integer>();
 		ArrayList<Integer> post = new ArrayList<Integer>();
 		
 		//if single element array
@@ -17,11 +18,22 @@ public class TraversalConverter {
 		}
 		
 		// Check to make sure the given array is actually a preorder of a binary search tree
-		
+		int count = 0;
+		for (String s : preorder){
+			list.add(Integer.parseInt(s));	//parse int data from String
+			count++;
+		}
+		try{
+			if(isValid(list)){
+				System.out.println("Error in search_pre_to_post. Input not a BST.");
+			}	
+		}
+		catch (Exception e){
+		}
 		
 		
 		//create array of Nodes for each String
-		int count = 0;
+		count = 0;
 		for (String s : preorder){
 			Node node = new Node();	//create a new node
 			node.setData(Integer.parseInt(s));	//parse int data from String
@@ -46,8 +58,80 @@ public class TraversalConverter {
 		
 	}
 	
+	//check if valid bst
+	public static boolean isValid(ArrayList<Integer> arr) throws Exception{
+		boolean state = false;
+		try {
+			state = recValidCheck(arr);
+		} catch (Exception e) {
+			System.out.println("Error in search_pre_to_post");
+		}
+		return state;
+	}
+	
+	public static boolean recValidCheck(ArrayList<Integer> list){
+		ArrayList<Integer> newListLeft = new ArrayList<Integer>();
+		ArrayList<Integer> newListRight = new ArrayList<Integer>();
+		int edge = -1;
+		
+		//base case
+		if (list.size() == 1){
+			return true;
+		}
+		
+		//find edge
+		for (int count = 1; count < list.size(); count++){
+			if(list.get(count) > list.get(0)){
+				edge = count;
+				break;
+			}
+		}
+		
+		if (edge == -1){
+			//then no edge
+			//check for greater than and recurse
+			for (int j = 1; j < list.size(); j++){
+				newListLeft.add(list.get(j));
+			}
+			for(int j = 0; j < newListLeft.size(); j++){
+				if (newListLeft.get(j) > list.get(0)){
+					return false;
+				}
+			}
+			return recValidCheck(newListLeft);
+			
+		}
+		//there is an edge
+		else{
+			//create new lists
+			for (int j = 1; j < edge; j++){
+				newListLeft.add(list.get(j));
+			}
+			for (int k = edge; k < list.size(); k++){
+				newListLeft.add(list.get(k));
+			}
+			
+			//check left for greater than
+			for(int j = 0; j < newListLeft.size(); j++){
+				if (newListLeft.get(j) > list.get(0)){
+					return false;
+				}
+			}
+			//check right for less than
+			for(int j = 0; j < newListRight.size(); j++){
+				if (newListLeft.get(j) < list.get(0)){
+					return false;
+				}
+			}
+			//recurse
+			return (recValidCheck(newListLeft) && recValidCheck(newListRight));
+		}
+	
+	}
+	
+	
     //create a bst from the preorder
-	static int buildbst(Node current, Node[] arr, int i, int biggestSoFar)
+	public static int buildbst(Node current, Node[] arr, int i, int biggestSoFar)
 	{
 		//base case
 	    if (i == arr.length) return i;
