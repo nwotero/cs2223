@@ -93,14 +93,30 @@ public class TraversalConverter {
     }
 
 	public static String[] pre_in_to_post(String[] preorder, String[] inorder) {
+		try{
+			String[] returnArray = pre_in_to_post_helper(preorder, inorder);
+			return returnArray;
+		}catch (Exception e){
+			System.out.println("Given arrays cannot be the preorder "
+					+ "and inorder traversals of the same tree");
+			return new String[0];
+		}
+		
+	}
+	
+	public static String[] pre_in_to_post_helper(String[] preorder, String[] inorder) 
+	throws Exception {
 		// Check to make sure the given arrays are actually a preorder and
 		// inorder of a binary
 		// search tree
 		if (preorder.length != inorder.length) {
-			printError("pre_in_to_post");
-			return new String[0];
+			throw new Exception();
 		} else if (preorder.length == 0) {
-			printError("pre_in_to_post");
+			System.out.println("Preorder list is empty!");
+			return new String[0];
+		} else if ((preorder.length + 1) % 2 != 0){
+			System.out.println("The given lists do not encode full binary trees!");
+			return new String[0];
 		}
 
 		// Base case for recursive algorithm
@@ -109,8 +125,7 @@ public class TraversalConverter {
 				String[] baseArray = { preorder[0] };
 				return baseArray;
 			} else {
-				printError("pre_in_to_post");
-				return new String[0];
+				throw new Exception();
 			}
 		}
 
@@ -120,11 +135,10 @@ public class TraversalConverter {
 		try {
 			partitionedInOrder = partitionArray(root, inorder);
 		} catch (Exception e) {
-			printError("pre_in_to_post");
-			return new String[0];
+			throw new Exception();
 		}
-		String[] leftSideIn = partitionedInOrder[0];
-		String[] rightSideIn = partitionedInOrder[1];
+		String[] leftSideIn = trimArray(partitionedInOrder[0]);
+		String[] rightSideIn = trimArray(partitionedInOrder[1]);
 
 		// Partition the preorder array using the partitioned inorder array
 		String[] leftSidePre = new String[leftSideIn.length];
@@ -139,8 +153,8 @@ public class TraversalConverter {
 		}
 
 		// Use recursion to convert the partitioned arrays into postorder arrays
-		String[] leftSidePost = pre_in_to_post(leftSidePre, leftSideIn);
-		String[] rightSidePost = pre_in_to_post(rightSidePre, rightSideIn);
+		String[] leftSidePost = pre_in_to_post_helper(leftSidePre, leftSideIn);
+		String[] rightSidePost = pre_in_to_post_helper(rightSidePre, rightSideIn);
 		String[] rootArray = { root };
 
 		// Concatenate the postorder arrays and the root.
@@ -151,25 +165,41 @@ public class TraversalConverter {
 	}
 
 	public static String[] pre_post_to_in(String[] preorder, String[] postorder) {
+		if ((preorder.length + 1) % 2 != 0){
+			System.out.println("The given lists do not encode full binary trees!");
+			return new String[0];
+		}
+		try{
+			String[] returnArray = pre_post_to_in_helper(preorder, postorder);
+			return returnArray;
+		}catch (Exception e){
+			System.out.println("Given arrays cannot be the preorder "
+					+ "and postorder traversals of the same tree");
+			return new String[0];
+		}
+		
+	}
+	
+	public static String[] pre_post_to_in_helper(String[] preorder, String[] postorder) 
+	throws Exception{
 		// Check to make sure the given arrays are actually a preorder and
 		// postorder of a binary
 		// search tree
 
 		if (preorder.length != postorder.length) {
-			printError("pre_post_to_in");
-			return new String[0];
+			throw new Exception();
 		} else if (preorder.length == 0) {
-			printError("pre_in_to_post");
-		}
+			System.out.println("Preorder list is empty!");
+			return new String[0];
+		} 
 
 		// Base case for recursive algorithm
 		if (preorder.length == 1) {
-			if (preorder[0] == postorder[0]) {
+			if (preorder[0].equals(postorder[0])) {
 				String[] baseArray = {preorder[0]};
 				return baseArray;
 			} else {
-				printError("pre_post_to_in");
-				return new String[0];
+				throw new Exception();
 			}
 		}
 
@@ -179,11 +209,10 @@ public class TraversalConverter {
 		try {
 			partitionedPostOrder = partitionArray(root, postorder);
 		} catch (Exception e) {
-			printError("pre_post_to_in");
-			return new String[0];
+			throw new Exception();
 		}
-		String[] leftSidePost = partitionedPostOrder[0];
-		String[] rightSidePost = partitionedPostOrder[1];
+		String[] leftSidePost = trimArray(partitionedPostOrder[0]);
+		String[] rightSidePost = trimArray(partitionedPostOrder[1]);
 
 		// Partition the preorder array using the partitioned inorder array
 		String[] leftSidePre = new String[leftSidePost.length];
@@ -196,30 +225,45 @@ public class TraversalConverter {
 		for (int k = 0; k < rightSidePre.length; k++) {
 			rightSidePre[k] = preorder[leftSidePre.length + k + 1];
 		}
-
-		// Use recursion to convert the partitioned arrays into postorder arrays
-		String[] leftSideIn = pre_post_to_in(leftSidePre, leftSidePost);
-		String[] rightSideIn = pre_post_to_in(rightSidePre, rightSidePost);
-		String[] rootArray = { root };
-		String[] returnArray = new String[leftSideIn.length + rightSideIn.length + 1];
 		
-		if (leftSideIn.length == 0){	//If this node has no children
-			String[] nullArray = {null};
-			String[] tempArray = concatenateArray(rootArray, nullArray);
-			returnArray = concatenateArray(tempArray, rightSideIn);
-		}else if (rightSideIn.length == 0){ //If this node has no neighbors
-			returnArray = concatenateArray(leftSideIn, rootArray);
-		}else{ //If this node has children and neighbors
-			//Iterate through children of root, insert root at null point
+		String[] rootArray = { root };
+		String[] nullArray = {null};
+		String[] returnArray = new String[leftSidePre.length + rightSidePre.length + 1];
+		if (rightSidePost.length == 0){
+			String[] leftSideIn = pre_post_to_in_helper(leftSidePre, leftSidePost);
+			boolean inserted = false;
 			for (int i = 0; i < leftSideIn.length; i++){
 				if (leftSideIn[i] == null){
 					leftSideIn[i] = root;
-					returnArray = concatenateArray(leftSideIn, rightSideIn); 
-					break;
+					inserted = true;
 				}
 			}
+			if(!inserted){
+				throw new Exception();
+			}
+			return leftSideIn;
+		} else if (leftSidePost.length == 0){
+			String[] rightSideIn = pre_post_to_in_helper(rightSidePre, rightSidePost);
+			String[] tempArray = concatenateArray(rootArray, nullArray);
+			returnArray = concatenateArray(tempArray, rightSideIn);
+			return returnArray;
+		}else{
+			String[] leftSideIn = pre_post_to_in_helper(leftSidePre, leftSidePost);
+			String[] rightSideIn = pre_post_to_in_helper(rightSidePre, rightSidePost);
+			boolean inserted = false;
+			for (int i = 0; i < leftSideIn.length; i++){
+				if (leftSideIn[i] == null){
+					leftSideIn[i] = root;
+					inserted = true;
+				}
+			}
+			if (!inserted){
+				throw new Exception();
+			}
+			String[] tempArray = concatenateArray(leftSideIn, nullArray);
+			returnArray = concatenateArray(tempArray, rightSideIn);
+			return returnArray;
 		}
-		return returnArray;
 	}
 
 	private static String[][] partitionArray(String pivot, String[] array)
@@ -266,10 +310,22 @@ public class TraversalConverter {
 
 		return returnArray;
 	}
-
-	private static void printError(String funcName) {
-		System.out.println("Error in method " + funcName
-				+ ": given arrays cannot"
-				+ "be the preorder and inorder traversals of the same tree");
+	
+	private static String[] trimArray(String[] input){
+		int counter = 0;
+		for (String bit : input){
+			if (bit == null){
+				break;
+			}
+			else{
+				counter++;
+			}
+		}
+		String[] returnArray = new String[counter];
+		for (int i = 0; i < counter; i++){
+			returnArray[i] = input[i];
+		}
+		
+		return returnArray;
 	}
 }
