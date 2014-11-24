@@ -47,13 +47,28 @@ public class Traversals {
 
         
         /* Testing */
-        System.out.println(readAtLeastOneLine);            
-        if (readAtLeastOneLine)
-            System.out.println("traversal1 length was : " + traversal1.length);
-
-        System.out.println(readTwoLines);            
-        if (readTwoLines)
-            System.out.println("traversal2 length was : " + traversal2.length);
-
+        System.out.println(readAtLeastOneLine);
+        System.out.println(readTwoLines); 
+        if (readAtLeastOneLine){
+        	System.out.println("traversal1 length was : " + traversal1.length);
+        	if(readTwoLines){
+        		System.out.println("traversal2 length was : " + traversal2.length);
+        		for (String s : TraversalConverter.pre_in_to_post(traversal1, traversal2)){
+        			System.out.print(s + " ");
+        		}
+        		System.out.println("");
+        		for (String s : TraversalConverter.pre_post_to_in(traversal2, traversal1)){
+        			System.out.println(s + " ");
+        		}
+        		System.out.println("");
+        	}
+        	else{
+        		for (String s : TraversalConverter.search_pre_to_post(traversal1)){
+        			System.out.print(s + " ");
+        		}
+        		System.out.println("");
+        	}
+        }
+        
     } //main
 } // class Traversals

@@ -56,6 +56,14 @@ public class TraversalConverterTest extends TestCase {
 	}
 	
 	@Test
+	public void test_pre_post_to_in() {
+		String[] pre = {"a","b","c"};
+		String[] post = {"b","c","a"};
+		String[] test = TraversalConverter.pre_post_to_in(pre, post);
+		assertArrayEquals(post, test);
+	}
+	
+	@Test
 	public void test_pre_in_to_post_nominal() {
 		System.out.println("Test test_pre_in_to_post_nominal");
 		String[] pre = {"6", "2", "1", "4", "8", "7", "9"};
