@@ -1,3 +1,4 @@
+package project2;
 /*************************************************************************
 Sample code for CS 2223  B term 2014 WPI
 @author Dan Dougherty

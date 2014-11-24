@@ -1,3 +1,4 @@
+package project2;
 import java.util.ArrayList;
 
 public class TraversalConverter {
@@ -15,49 +16,37 @@ public class TraversalConverter {
 			return preorder;
 		}
 		
-		// Check to make sure the given array is actually a preorder of a binary
+		// Check to make sure the given array is actually a preorder of a binary search tree
 		
 		
 		
-		// search tree
 		//create array of Nodes for each String
 		int count = 0;
 		for (String s : preorder){
-			Node node = new Node();
-			node.setData(Integer.parseInt(s));
+			Node node = new Node();	//create a new node
+			node.setData(Integer.parseInt(s));	//parse int data from String
 			pre[count] = node;
 			count++;
 		}
 		
 		//create bst from preorder
-		buildbst(pre[0],pre,0,Integer.MAX_VALUE);
+		buildbst(pre[0],pre,1,Integer.MAX_VALUE);
 		
-		//create postorder
+		//generate postorder of bst
 		post = generatePostOrder(pre[0]);
 		
+		//convert int back to Strings
 		count = 0;
 		for (Integer num : post){
 			postorder[count] = num.toString();
 			count++;
 		}
 		
-		// Convert the preorder to a postorder
 		return postorder;
 		
 	}
 	
-    public static ArrayList<Integer> generatePostOrder(Node Root){
-    	ArrayList<Integer> post = new ArrayList<Integer>();
-        if(Root.getLeft() != null){
-            post.addAll(generatePostOrder(Root.getLeft()));
-        }
-        if(Root.getRight() != null){
-            post.addAll(generatePostOrder(Root.getRight()));
-        }
-        post.add(Root.getData());
-        return post;
-    }
-	
+    //create a bst from the preorder
 	static int buildbst(Node current, Node[] arr, int i, int biggestSoFar)
 	{
 		//base case
@@ -79,6 +68,29 @@ public class TraversalConverter {
 
 	    return i;
 	}
+	
+	//takes a bst and generates the postorder
+    public static ArrayList<Integer> generatePostOrder(Node Root){
+    	//variable declaration
+    	ArrayList<Integer> post = new ArrayList<Integer>();
+    	//if node has a left child
+        if(Root.getLeft() != null){
+        	//recurse down left subtree
+        	
+            post.addAll(generatePostOrder(Root.getLeft()));
+        }
+        
+        //if node has a right child
+        if(Root.getRight() != null){
+        	//recurse down right subtree
+            post.addAll(generatePostOrder(Root.getRight()));
+        }
+        
+        //add current node
+        post.add(Root.getData());
+        
+        return post;
+    }
 
 	public static String[] pre_in_to_post(String[] preorder, String[] inorder) {
 		// Check to make sure the given arrays are actually a preorder and

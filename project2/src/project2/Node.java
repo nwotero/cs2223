@@ -1,3 +1,4 @@
+package project2;
 
 public class Node {
 	private Node left = null;
