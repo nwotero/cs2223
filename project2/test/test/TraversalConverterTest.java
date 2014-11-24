@@ -67,6 +67,17 @@ public class TraversalConverterTest extends TestCase {
 	}
 	
 	@Test
+	public void test_pre_in_to_post_nominal_letters() {
+		System.out.println("Test test_pre_in_to_post_nominal");
+		String[] pre = {"f", "b", "a", "d", "h", "g", "i"};
+		String[] in = {"a", "b", "d", "f", "g", "h", "i"};
+		String[] post = {"a", "d", "b", "g", "i", "h", "f"};
+		String[] test = TraversalConverter.pre_in_to_post(pre, in);
+		
+		assertArrayEquals(post, test);
+	}
+	
+	@Test
 	public void test_pre_in_to_post_unbalanced() {
 		System.out.println("Test test_pre_in_to_post_unbalanced");
 		String[] pre = {"6", "2", "1", "4", "8", "9"};
