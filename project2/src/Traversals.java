@@ -10,7 +10,6 @@ Should be helpful in project 2, on tree traversals.
 
 *************************************************************************/
 import java.io.*;
-import java.util.*;
 
 public class Traversals {
 

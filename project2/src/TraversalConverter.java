@@ -1,11 +1,83 @@
+import java.util.ArrayList;
+
 public class TraversalConverter {
 
+	//takes in the preorder of a bst in the form String[] and converts to the postorder 
 	public static String[] search_pre_to_post(String[] preorder) {
+		//variable declarations
+		int size = preorder.length;
+		String[] postorder = new String[size];
+		Node pre[] = new Node[size];
+		ArrayList<Integer> post = new ArrayList<Integer>();
+		
+		//if single element array
+		if (preorder.length == 1){
+			return preorder;
+		}
+		
 		// Check to make sure the given array is actually a preorder of a binary
+		
+		
+		
 		// search tree
-
+		//create array of Nodes for each String
+		int count = 0;
+		for (String s : preorder){
+			Node node = new Node();
+			node.setData(Integer.parseInt(s));
+			pre[count] = node;
+			count++;
+		}
+		
+		//create bst from preorder
+		buildbst(pre[0],pre,0,Integer.MAX_VALUE);
+		
+		//create postorder
+		post = generatePostOrder(pre[0]);
+		
+		count = 0;
+		for (Integer num : post){
+			postorder[count] = num.toString();
+			count++;
+		}
+		
 		// Convert the preorder to a postorder
-		return null;
+		return postorder;
+		
+	}
+	
+    public static ArrayList<Integer> generatePostOrder(Node Root){
+    	ArrayList<Integer> post = new ArrayList<Integer>();
+        if(Root.getLeft() != null){
+            post.addAll(generatePostOrder(Root.getLeft()));
+        }
+        if(Root.getRight() != null){
+            post.addAll(generatePostOrder(Root.getRight()));
+        }
+        post.add(Root.getData());
+        return post;
+    }
+	
+	static int buildbst(Node current, Node[] arr, int i, int biggestSoFar)
+	{
+		//base case
+	    if (i == arr.length) return i;
+
+	    // recurse left
+	    if (arr[i].getData() < current.getData())
+	    {
+	      current.setLeft(arr[i++]);
+	      i = buildbst(current.getLeft(), arr, i, current.getData());
+	    }
+
+	    // recurse right
+	    if (i < arr.length && arr[i].getData() < biggestSoFar)
+	    {
+	      current.setRight(arr[i++]);
+	      i = buildbst(current.getRight(), arr, i, biggestSoFar);
+	    }
+
+	    return i;
 	}
 
 	public static String[] pre_in_to_post(String[] preorder, String[] inorder) {
