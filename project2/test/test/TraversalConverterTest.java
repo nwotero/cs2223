@@ -26,36 +26,34 @@ public class TraversalConverterTest extends TestCase {
 	 * Run the String[] search_pre_to_post(String[]) method test
 	 */
 	
-
-	@Test
-	public void testSearch_pre_to_post() {
-		String[] pre = {"20","10","6","15","30","35"};
-		String[] post = {"6","15","10","35","30","20"};
-		assertArrayEquals(post, TraversalConverter.search_pre_to_post(pre));
-	}
-	
-	
 	@Test
 	public void testSearch_pre_to_post_right() {
-		String[] pre = {"1","2","3","4","5"};
-		String[] post = {"5","4","3","2","1"};
-		assertArrayEquals(post, TraversalConverter.search_pre_to_post(pre));
+		String[] pre = {"a","b","c","d","e"};
+		String[] post = {"e","d","c","b","a"};
+		String[] test = TraversalConverter.search_pre_to_post(pre);
+		assertArrayEquals(post, test);
 	}
-	
 	
 	@Test
 	public void testSearch_pre_to_post_left() {
-		String[] pre = {"20","10","6", "4","2"};
-		String[] post = {"2","4","6","10","20"};
+		String[] pre = {"e","d","c", "b","a"};
+		String[] post = {"a","b","c","d","e"};
 		assertArrayEquals(post, TraversalConverter.search_pre_to_post(pre));
 	}
 
 	@Test(expected=Exception.class)
 	public void testSearch_pre_to_post_invalid_throws(){
-		String[] pre = {"20","30","40","10"};
+		String[] pre = {"bb","cc","dd","aa"};
 		TraversalConverter.search_pre_to_post(pre);
 	}
 	
+	@Test
+	public void testSearch_pre_to_post_letters() {
+		String[] pre = {"d","b","a", "c","e","f"};
+		String[] post = {"a","c","b","f","e","d"};
+		String[] test = TraversalConverter.search_pre_to_post(pre);
+		assertArrayEquals(post, test);
+	}
 	/**
 	@Test
 	public void test_pre_in_to_post_nominal() {
