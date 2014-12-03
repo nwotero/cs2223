@@ -16,11 +16,20 @@ public class EdgeWeightedGraph {
 			adj[v] = new Bag<Edge>();
 	}
 
-	// TODO
-	public EdgeWeightedGraph(In in) {
-		this.V = 0;
-		this.E = 0;
+	public EdgeWeightedGraph(In in)
+	{
+		this(in.readInt());
+		int E = in.readInt();
+		for (int i = 0; i < E; i++)
+		{ // Add an edge.
+			int v = in.readInt();
+			int w = in.readInt();
+			int weight = in.readInt();
+			Edge newEdge = new Edge(v, w, weight);
+			addEdge(newEdge);
+		}
 	}
+
 
 	public int V() {
 		return V;
