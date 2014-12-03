@@ -1,3 +1,9 @@
+/*
+ * Donald Bourque, Nicholas Otero
+ * CS 2223 - Project 2
+ * 11/24/2014
+ */
+
 package test;
 
 

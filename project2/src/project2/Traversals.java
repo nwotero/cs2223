@@ -1,3 +1,9 @@
+/*
+ * Donald Bourque, Nicholas Otero
+ * CS 2223 - Project 2
+ * 11/24/2014
+ */
+
 package project2;
 /*************************************************************************
 Sample code for CS 2223  B term 2014 WPI
@@ -57,8 +63,8 @@ public class Traversals {
         			System.out.print(s + " ");
         		}
         		System.out.println("");
-        		for (String s : TraversalConverter.pre_post_to_in(traversal2, traversal1)){
-        			System.out.println(s + " ");
+        		for (String s : TraversalConverter.pre_post_to_in(traversal1, traversal2)){
+        			System.out.print(s + " ");
         		}
         		System.out.println("");
         	}
@@ -69,6 +75,5 @@ public class Traversals {
         		System.out.println("");
         	}
         }
-        
     } //main
 } // class Traversals
