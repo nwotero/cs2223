@@ -38,12 +38,61 @@ public class AdaptiveMST {
     // STUB VERSION:  right now this doesn't do anything but echo the input.
     //  Get rid of these printlns !
 	//TODO
-    public static void treeChanges(EdgeWeightedGraph G, EdgeWeightedGraph T,
+    public static void treeChanges(EdgeWeightedGraph G, PrimMST t,
                                    Edge e) {
-        System.out.println(G);
-        System.out.println(T);
-        System.out.println(e);
-        System.out.println();
+    	boolean validEdge = false;
+        Edge original = null;
+    	for (Edge edge : G.edges()){
+    		int v = edge.either();
+    		int w = edge.other(v);
+        	if ((v == e.either())
+        			&&
+        			(w == e.other(v)))
+        	{
+        		validEdge = true;
+        		original = edge;
+        		break;
+        	}
+        }
+    	
+    	if (validEdge){
+    		//Decide what the change is
+    		boolean isInMST = false;
+    		for (Edge edge : t.edges()){
+    			if ((edge.either() == original.either())
+    					&&
+    					(edge.other(edge.either()) == original.other(edge.either())))
+    			{
+    				isInMST = true;
+    				break;
+    			}
+    		}
+    		
+    		//If the edge is not in the MST and the weight has increased
+    		if (!isInMST && ((e.weight() - original.weight()) > 0)){
+    			System.out.println("No change in the tree");
+    		}
+    		//If the edge is not in the MST and the weight has decreased
+    		else if (!isInMST && ((e.weight() - original.weight()) < 0))
+    		{
+    			//Case 3, create cycle and delete maximum weighted edge
+    		}
+    		//If the edge is in the MST and the weight has decreased
+    		else if (isInMST && ((e.weight() - original.weight()) < 0))
+    		{
+    			System.out.println("No change in the tree");
+    		}
+    		//If the edge is in the MST and the weight has increased
+    		else if (isInMST && ((e.weight() - original.weight()) < 0))
+    		{
+    			//Case 4: Remove the edge, consider minimum crossing edge, place minimum in tree
+    		}
+    		
+    	}
+    	else //new weighted edge
+    	{
+    		//Case 5: Add edge, consider cycle, remove maximum.
+    	}     
     }
 
     /*
@@ -77,7 +126,16 @@ public class AdaptiveMST {
 
         // Now compute an MST for G
         // Here we just make T something dumb
-        EdgeWeightedGraph T = new EdgeWeightedGraph(17);
+        PrimMST T = new PrimMST(G);
+        int numEdges = 0;
+        for (Edge edge : T.edges()){
+        	numEdges++;
+        }
+        //WARNING: THIS IS MOST LIKELY WRONG!!!!!!
+        if (numEdges < 50)
+        {
+        	System.out.println(T.toString());
+        }
 
         // Read the user input, line by line
         // This is all stock Java
