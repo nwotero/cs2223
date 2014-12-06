@@ -37,6 +37,7 @@ public class AdaptiveMST {
 
     // STUB VERSION:  right now this doesn't do anything but echo the input.
     //  Get rid of these printlns !
+	//TODO
     public static void treeChanges(EdgeWeightedGraph G, EdgeWeightedGraph T,
                                    Edge e) {
         System.out.println(G);
