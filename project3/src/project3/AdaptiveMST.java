@@ -23,6 +23,7 @@ package project3;
 import java.io.*;
 import java.util.*;
 
+import std.Bag;
 import std.Cycle;
 import std.In;
 
@@ -41,7 +42,7 @@ public class AdaptiveMST {
 	//TODO
     public static void treeChanges(EdgeWeightedGraph G, PrimMST t,
                                    Edge e) {
-    	boolean validEdge = false;
+    	boolean updatedEdge = false;
         Edge original = null;
     	for (Edge edge : G.edges()){
     		int v = edge.either();
@@ -54,13 +55,13 @@ public class AdaptiveMST {
         			&&
         			(w == e.either())))
         	{
-        		validEdge = true;
+        		updatedEdge = true;
         		original = edge;
         		break;
         	}
         }
     	
-    	if (validEdge){
+    	if (updatedEdge){
     		//Decide what the change is
     		boolean isInMST = false;
     		for (Edge edge : t.edges()){
@@ -109,7 +110,17 @@ public class AdaptiveMST {
     		else if (isInMST && ((e.weight() - original.weight()) < 0))
     		{
     			System.out.println("Case 4");
-    			//Case 4: Remove the edge, consider minimum crossing edge, place minimum in tree
+    			//Case 4: consider the two trees obtained by removing edge from t
+    			// find minimum-weight crossing edge and swap if less
+    			Edge minCrossingEdge = findMinCrossing(G, t, e);
+    			//if Edge is e
+    			if (minCrossingEdge.compareTo(e) == 0){
+    				System.out.println("No change in the tree");
+    			}
+    			else{
+    				System.out.println("The result is to remove tree edge {" + e.either() + ", " + e.other(e.either()) + "} and "
+    						+ "replace it with edge {" + minCrossingEdge.either() + ", " + minCrossingEdge.other(minCrossingEdge.either()) + "}");
+    			}
     		}
     		
     	}
@@ -193,6 +204,78 @@ public class AdaptiveMST {
         return new Edge(x,y, weight);
     }
     
+    public static Edge findMinCrossing(EdgeWeightedGraph G, PrimMST t, Edge e){
+    	ArrayList<Edge> t1 = new ArrayList<Edge>();
+    	ArrayList<Edge> t2 = new ArrayList<Edge>();
+    	
+    	//dfs to determine edges in trees
+    	t1.addAll(dfsParents(t, e));
+    	t2.addAll(dfsChildren(t, e));
+    	
+    	//determine minimum crossing edge
+    	Edge tempShortest = null;
+    	for (Edge edgeG : G.edges()){ 
+    		for (Edge edgeT1 : t1){
+    			for (Edge edgeT2 : t2){
+    				//if they have the same weight then they are the same edge
+    				if ((edgeG.compareTo(edgeT1) == 0 || edgeG.compareTo(edgeT2) == 0)){
+    					continue;
+    				}
+    				//if edgeG is a crossing edge
+    				if ((edgeG.either() == edgeT1.other(edgeT1.either()) && edgeG.other(edgeG.either()) == edgeT2.either()) || 
+    						((edgeG.other(edgeG.either()) == edgeT1.either() && edgeG.either() == edgeT2.other(edgeT2.either())))){
+    					//maintain shortest crossing edge estimate
+    					if(tempShortest == null){
+    						if (edgeG.either() == e.either() && edgeG.other(edgeG.either()) == e.other(e.either())){
+        						tempShortest = e;
+    						}
+    						else{
+        						tempShortest = edgeG;
+    						}
+    					}
+    					else{
+    						if (edgeG.either() == e.either() && edgeG.other(edgeG.either()) == e.other(e.either())){
+    							if(tempShortest.compareTo(e) > 0){
+        							tempShortest = e;
+        						}
+    						}
+    						else{
+        						if(tempShortest.compareTo(edgeG) > 0){
+        							tempShortest = edgeG;
+        						}
+    						}
+
+    					}
+    				}
+    			}
+    		}
+    	}
+    	return tempShortest;
+    	
+
+    }
+    
+    public static ArrayList<Edge> dfsParents(PrimMST t, Edge e){
+    	ArrayList<Edge> tPrime = new ArrayList<Edge>();
+    	//find parents
+    	for (Edge edge : t.edges()){
+    		if (edge.other(edge.either()) == e.either()){
+    			tPrime.addAll(dfsParents(t, edge));
+    		}
+    	}
+    	return tPrime;
+    }
+    
+    public static ArrayList<Edge> dfsChildren(PrimMST t, Edge e){
+    	ArrayList<Edge> tPrime = new ArrayList<Edge>();
+    	//find children
+    	for (Edge edge : t.edges()){
+    		if (edge.either() == e.other(e.either())){
+    			tPrime.addAll(dfsChildren(t, edge));
+    		}
+    	}
+    	return tPrime;
+    }
 
     public static void main(String[] args) throws IOException, IllegalArgumentException {
 
