@@ -107,12 +107,13 @@ public class AdaptiveMST {
     			System.out.println("No change in the tree");
     		}
     		//If the edge is in the MST and the weight has increased
-    		else if (isInMST && ((e.weight() - original.weight()) < 0))
+    		else if (isInMST && ((e.weight() - original.weight()) > 0))
     		{
     			System.out.println("Case 4");
     			//Case 4: consider the two trees obtained by removing edge from t
     			// find minimum-weight crossing edge and swap if less
     			Edge minCrossingEdge = findMinCrossing(G, t, e);
+    			System.out.println("{" + minCrossingEdge.either() + ", " + minCrossingEdge.other(minCrossingEdge.either()) + "}");
     			//if Edge is e
     			if (minCrossingEdge.compareTo(e) == 0){
     				System.out.println("No change in the tree");
@@ -209,13 +210,33 @@ public class AdaptiveMST {
     	ArrayList<Edge> t2 = new ArrayList<Edge>();
     	
     	//dfs to determine edges in trees
-    	t1.addAll(dfsParents(t, e));
-    	t2.addAll(dfsChildren(t, e));
-    	
+    	t1 = dfsParents(t, e);
+    	t2 = dfsChildren(t, e);
     	//determine minimum crossing edge
     	Edge tempShortest = null;
+    	boolean breakflag = false;
     	for (Edge edgeG : G.edges()){ 
+    		breakflag = false;
     		for (Edge edgeT1 : t1){
+    			if (edgeG.compareTo(edgeT1) == 0){
+    				breakflag = true;
+    				break;
+    			}
+    		}
+    		if (breakflag == true){
+    			continue;
+    		}
+    		for (Edge edgeT2 : t2){
+    			if (edgeG.compareTo(edgeT2) == 0){
+    				breakflag = true;
+    				break;
+    			}
+    		}
+    		if (breakflag == true){
+    			continue;
+    		}
+    		
+    		
     			for (Edge edgeT2 : t2){
     				//if they have the same weight then they are the same edge
     				if ((edgeG.compareTo(edgeT1) == 0 || edgeG.compareTo(edgeT2) == 0)){
@@ -259,8 +280,13 @@ public class AdaptiveMST {
     	ArrayList<Edge> tPrime = new ArrayList<Edge>();
     	//find parents
     	for (Edge edge : t.edges()){
-    		if (edge.other(edge.either()) == e.either()){
-    			tPrime.addAll(dfsParents(t, edge));
+    		if (edge.other(edge.either()) == e.either() || edge.either() == e.either()){
+    			if(!edge.isVisited()){
+    				System.out.println("hi parents");
+        			tPrime.add(edge);
+        			edge.setVisited(true);
+        			tPrime.addAll(dfsParents(t, edge));
+    			}	
     		}
     	}
     	return tPrime;
@@ -270,8 +296,13 @@ public class AdaptiveMST {
     	ArrayList<Edge> tPrime = new ArrayList<Edge>();
     	//find children
     	for (Edge edge : t.edges()){
-    		if (edge.either() == e.other(e.either())){
-    			tPrime.addAll(dfsChildren(t, edge));
+    		if (edge.either() == e.other(e.either()) || edge.other(edge.either()) == e.other(e.either())){
+    			if(!edge.isVisited()){
+    				System.out.println("hi parents");
+        			tPrime.add(edge);
+        			edge.setVisited(true);
+        			tPrime.addAll(dfsParents(t, edge));
+    			}	
     		}
     	}
     	return tPrime;

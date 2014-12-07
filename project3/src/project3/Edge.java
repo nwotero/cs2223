@@ -12,6 +12,7 @@ public class Edge implements Comparable<Edge> {
 	private final int w;
 	// the other vertex
 	private final double weight;
+	private boolean visited = false;
 
 	// edge weight
 	public Edge(int v, int w, double weight) {
@@ -48,5 +49,13 @@ public class Edge implements Comparable<Edge> {
 
 	public String toString() {
 		return String.format("%d-%d %.2f", v, w, weight);
+	}
+
+	public boolean isVisited() {
+		return visited;
+	}
+
+	public void setVisited(boolean visited) {
+		this.visited = visited;
 	}
 }
