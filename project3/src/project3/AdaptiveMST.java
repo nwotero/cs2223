@@ -46,9 +46,13 @@ public class AdaptiveMST {
     	for (Edge edge : G.edges()){
     		int v = edge.either();
     		int w = edge.other(v);
-        	if ((v == e.either())
+        	if (((v == e.either())
         			&&
         			(w == e.other(v)))
+        			||
+        			((v == e.other(e.either()))
+        			&&
+        			(w == e.either())))
         	{
         		validEdge = true;
         		original = edge;
@@ -60,9 +64,14 @@ public class AdaptiveMST {
     		//Decide what the change is
     		boolean isInMST = false;
     		for (Edge edge : t.edges()){
-    			if ((edge.either() == original.either())
+    			if (((edge.either() == original.either())
     					&&
-    					(edge.other(edge.either()) == original.other(edge.either())))
+    					(edge.other(edge.either()) == original.other(original.either())))
+    					||
+    					((edge.either() == original.other(original.either()))
+    					&&
+    					(edge.other(edge.either()) == original.either())
+    					))
     			{
     				isInMST = true;
     				break;
@@ -76,10 +85,9 @@ public class AdaptiveMST {
     		//If the edge is not in the MST and the weight has decreased
     		else if (!isInMST && ((e.weight() - original.weight()) < 0))
     		{
-    			
     			//Case 3, create cycle and delete maximum weighted edge
     			Edge removed = findRemovedEdge(G, t, e);
-    			if (removed.either() != e.either())
+    			if (removed.compareTo(e) != 0)
     			{
     				int vr = removed.either();
     				int wr = removed.other(vr);
@@ -107,23 +115,51 @@ public class AdaptiveMST {
     	}
     	else //new weighted edge
     	{
-    		System.out.println("Case 5");
     		//Case 5: Add edge, consider cycle, remove maximum.
+    		Edge removed = findRemovedEdge(G, t, e);
+			if (removed.compareTo(e) != 0)
+			{
+				int vr = removed.either();
+				int wr = removed.other(vr);
+				int va = e.either();
+				int wa = e.other(va);
+				System.out.println("the result is to remove tree edge {" + vr + ", " + wr + "} and "
+						+ "replace it by edge {" + va + ", " + wa + "}");
+			}
+			else{
+				System.out.println("No change in the tree");
+			}
     	}     
     }
 
     private static Edge findRemovedEdge(EdgeWeightedGraph G, PrimMST t, Edge e) {
-		EdgeWeightedGraph temp = G;
-		G.addEdge(e);
-		Cycle cycleDetector = new Cycle(G);
+		EdgeWeightedGraph temp = t.toEdgeWeightGraph();
+		temp.addEdge(e);
+		
+		Cycle cycleDetector = new Cycle(temp);
 		Iterable<Integer> cycle = cycleDetector.cycle();
 		ArrayList<Edge> cycleEdges = new ArrayList<Edge>();
 		Iterator<Integer> cycleIterator = cycle.iterator();
+		
 		int previous = cycleIterator.next();
 		while (cycleIterator.hasNext()){
 			int w = cycleIterator.next();
 			Edge ed = G.getEdge(previous, w);
-			cycleEdges.add(ed);
+			if (ed == null ||
+					(((ed.either() == e.either())
+					&&
+					(ed.other(ed.either()) == e.other(e.either())))
+					||
+					((ed.either() == e.other(e.either()))
+					&&
+					(ed.other(ed.either()) == e.either()))))
+			{
+				cycleEdges.add(e);
+			}
+			else{
+				cycleEdges.add(ed);
+			}
+			
 			previous = w;
 		}
 		

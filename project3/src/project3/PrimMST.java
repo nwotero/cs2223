@@ -95,6 +95,16 @@ public class PrimMST {
         // check optimality conditions
         assert check(G);
     }
+    
+    public EdgeWeightedGraph toEdgeWeightGraph(){
+    	EdgeWeightedGraph returnGraph = new EdgeWeightedGraph(edgeTo.length);
+    	for (Edge e : edgeTo){
+    		if (e == null) continue;
+    		returnGraph.addEdge(e);
+    	}
+    	
+    	return returnGraph;
+    }
 
     // run Prim's algorithm in graph G, starting from vertex s
     private void prim(EdgeWeightedGraph G, int s) {
@@ -208,18 +218,16 @@ public class PrimMST {
         return true;
     }
 
-    /**
-     * Unit tests the <tt>PrimMST</tt> data type.
-     */
-    public static void main(String[] args) {
-        In in = new In(args[0]);
-        EdgeWeightedGraph G = new EdgeWeightedGraph(in);
-        PrimMST mst = new PrimMST(G);
-        for (Edge e : mst.edges()) {
-            StdOut.println(e);
-        }
-        StdOut.printf("%.5f\n", mst.weight());
+    public String toString(){
+    	String returnString = "";
+    	for (Edge e : edgeTo){
+    		if (e == null) continue;
+    		returnString += e.toString() + ", ";
+    	}
+    	
+    	returnString += "Done.";
+    	
+    	return returnString;
     }
-
 
 }

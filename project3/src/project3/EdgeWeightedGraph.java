@@ -26,7 +26,7 @@ public class EdgeWeightedGraph {
 		{ // Add an edge.
 			int v = in.readInt();
 			int w = in.readInt();
-			int weight = in.readInt();
+			double weight = in.readDouble();
 			Edge newEdge = new Edge(v, w, weight);
 			addEdge(newEdge);
 		}
@@ -51,7 +51,9 @@ public class EdgeWeightedGraph {
 	public Edge getEdge(int v, int w){
 		Bag<Edge> b = adj[v];
 		for (Edge e : b){
-			if (e.either() == v && e.other(v) == w)
+			if (e.either() == v && e.other(e.either()) == w
+					||
+					e.either() == w && e.other(e.either()) == v)
 			{
 				return e;
 			}
@@ -62,7 +64,9 @@ public class EdgeWeightedGraph {
 	public double getEdgeWeight(int v, int w){
 		Bag<Edge> b = adj[v];
 		for (Edge e : b){
-			if (e.either() == v && e.other(v) == w)
+			if (e.either() == v && e.other(e.either()) == w
+					||
+					e.either() == w && e.other(e.either()) == v)
 			{
 				return e.weight();
 			}
