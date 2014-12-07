@@ -1,5 +1,7 @@
 package project3;
 
+import java.util.ArrayList;
+
 import std.Bag;
 import std.In;
 
@@ -45,9 +47,35 @@ public class EdgeWeightedGraph {
 		adj[w].add(e);
 		E++;
 	}
+	
+	public Edge getEdge(int v, int w){
+		Bag<Edge> b = adj[v];
+		for (Edge e : b){
+			if (e.either() == v && e.other(v) == w)
+			{
+				return e;
+			}
+		}
+		return null;
+	}
+	
+	public double getEdgeWeight(int v, int w){
+		Bag<Edge> b = adj[v];
+		for (Edge e : b){
+			if (e.either() == v && e.other(v) == w)
+			{
+				return e.weight();
+			}
+		}
+		return 99;
+	}
 
-	public Iterable<Edge> adj(int v) {
-		return adj[v];
+	public ArrayList<Integer> adj(int v) {
+		ArrayList<Integer> returnList = new ArrayList<Integer>();
+		for (Edge e : adj[v]){
+			returnList.add(e.other(v));
+		}
+		return returnList;
 	}
 
 	public Iterable<Edge> edges() {

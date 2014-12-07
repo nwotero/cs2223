@@ -75,6 +75,7 @@ public class AdaptiveMST {
     		//If the edge is not in the MST and the weight has decreased
     		else if (!isInMST && ((e.weight() - original.weight()) < 0))
     		{
+    			System.out.println("Case 3");
     			//Case 3, create cycle and delete maximum weighted edge
     		}
     		//If the edge is in the MST and the weight has decreased
@@ -85,12 +86,14 @@ public class AdaptiveMST {
     		//If the edge is in the MST and the weight has increased
     		else if (isInMST && ((e.weight() - original.weight()) < 0))
     		{
+    			System.out.println("Case 4");
     			//Case 4: Remove the edge, consider minimum crossing edge, place minimum in tree
     		}
     		
     	}
     	else //new weighted edge
     	{
+    		System.out.println("Case 5");
     		//Case 5: Add edge, consider cycle, remove maximum.
     	}     
     }

@@ -109,12 +109,11 @@ public class PrimMST {
     // scan vertex v
     private void scan(EdgeWeightedGraph G, int v) {
         marked[v] = true;
-        for (Edge e : G.adj(v)) {
-            int w = e.other(v);
+        for (int w : G.adj(v)) {
             if (marked[w]) continue;         // v-w is obsolete edge
-            if (e.weight() < distTo[w]) {
-                distTo[w] = e.weight();
-                edgeTo[w] = e;
+            if (G.getEdgeWeight(v, w) < distTo[w]) {
+                distTo[w] = G.getEdgeWeight(v, w);
+                edgeTo[w] = G.getEdge(v, w);
                 if (pq.contains(w)) pq.decreaseKey(w, distTo[w]);
                 else                pq.insert(w, distTo[w]);
             }
