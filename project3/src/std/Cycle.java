@@ -145,24 +145,4 @@ public class Cycle {
             }
         }
     }
-
-    /**
-     * Unit tests the <tt>Cycle</tt> data type.
-     */
-    public static void main(String[] args) {
-        In in = new In(args[0]);
-        EdgeWeightedGraph G = new EdgeWeightedGraph(in);
-        Cycle finder = new Cycle(G);
-        if (finder.hasCycle()) {
-            for (int v : finder.cycle()) {
-                StdOut.print(v + " ");
-            }
-            StdOut.println();
-        }
-        else {
-            StdOut.println("Graph is acyclic");
-        }
-    }
-
-
 }

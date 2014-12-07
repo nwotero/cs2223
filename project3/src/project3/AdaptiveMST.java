@@ -23,6 +23,7 @@ package project3;
 import java.io.*;
 import java.util.*;
 
+import std.Cycle;
 import std.In;
 
 public class AdaptiveMST {
@@ -75,8 +76,21 @@ public class AdaptiveMST {
     		//If the edge is not in the MST and the weight has decreased
     		else if (!isInMST && ((e.weight() - original.weight()) < 0))
     		{
-    			System.out.println("Case 3");
+    			
     			//Case 3, create cycle and delete maximum weighted edge
+    			Edge removed = findRemovedEdge(G, t, e);
+    			if (removed.either() != e.either())
+    			{
+    				int vr = removed.either();
+    				int wr = removed.other(vr);
+    				int va = e.either();
+    				int wa = e.other(va);
+    				System.out.println("the result is to remove tree edge {" + vr + ", " + wr + "} and "
+    						+ "replace it by edge {" + va + ", " + wa + "}");
+    			}
+    			else{
+    				System.out.println("No change in the tree");
+    			}
     		}
     		//If the edge is in the MST and the weight has decreased
     		else if (isInMST && ((e.weight() - original.weight()) < 0))
@@ -98,7 +112,31 @@ public class AdaptiveMST {
     	}     
     }
 
-    /*
+    private static Edge findRemovedEdge(EdgeWeightedGraph G, PrimMST t, Edge e) {
+		EdgeWeightedGraph temp = G;
+		G.addEdge(e);
+		Cycle cycleDetector = new Cycle(G);
+		Iterable<Integer> cycle = cycleDetector.cycle();
+		ArrayList<Edge> cycleEdges = new ArrayList<Edge>();
+		Iterator<Integer> cycleIterator = cycle.iterator();
+		int previous = cycleIterator.next();
+		while (cycleIterator.hasNext()){
+			int w = cycleIterator.next();
+			Edge ed = G.getEdge(previous, w);
+			cycleEdges.add(ed);
+			previous = w;
+		}
+		
+		Edge maxEdge = cycleEdges.get(0);
+		for (Edge ed : cycleEdges){
+			if (ed.weight() > maxEdge.weight()){
+				maxEdge = ed;
+			}
+		}
+		return maxEdge;
+	}
+
+	/*
       REQUIRES: a string consisting of 3 tokens representing two ints and a double.
       RETURNS:  a weighted edge built from this data.
       EFFECTS: in addition to number format exceptions, can throw an
