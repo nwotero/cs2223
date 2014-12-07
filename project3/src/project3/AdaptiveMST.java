@@ -107,7 +107,7 @@ public class AdaptiveMST {
     			System.out.println("No change in the tree");
     		}
     		//If the edge is in the MST and the weight has increased
-    		else if (isInMST && ((e.weight() - original.weight()) < 0))
+    		else if (isInMST && ((e.weight() - original.weight()) > 0))
     		{
     			System.out.println("Case 4");
     			//Case 4: consider the two trees obtained by removing edge from t
