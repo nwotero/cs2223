@@ -113,7 +113,6 @@ public class AdaptiveMST {
     			//Case 4: consider the two trees obtained by removing edge from t
     			// find minimum-weight crossing edge and swap if less
     			Edge minCrossingEdge = findMinCrossing(G, t, e);
-    			System.out.println("{" + minCrossingEdge.either() + ", " + minCrossingEdge.other(minCrossingEdge.either()) + "}");
     			//if Edge is e
     			if (minCrossingEdge.compareTo(e) == 0){
     				System.out.println("No change in the tree");
@@ -208,61 +207,91 @@ public class AdaptiveMST {
     public static Edge findMinCrossing(EdgeWeightedGraph G, PrimMST t, Edge e){
     	ArrayList<Edge> t1 = new ArrayList<Edge>();
     	ArrayList<Edge> t2 = new ArrayList<Edge>();
+    	ArrayList<Edge> tWithoutE = new ArrayList<Edge>();
+    	ArrayList<Edge> remainingEdges = new ArrayList<Edge>();
     	
     	//dfs to determine edges in trees
-    	t1 = dfsParents(t, e);
-    	t2 = dfsChildren(t, e);
+    	
+    	for (Edge edge : t.edges()){
+    		if (edge.either() != e.either() || edge.other(edge.either()) != e.other(e.either())){
+    			tWithoutE.add(edge);
+    		}
+    	}
+    	//determine tree1
+    	t1 = dfs(tWithoutE, tWithoutE.get(0));
+    	//determine tree2
+    	t2 = getDiff(tWithoutE, t1);
+    	//create list of remaining edges
+    	remainingEdges = getRemaining(G, t1, t2);
+
     	//determine minimum crossing edge
     	Edge tempShortest = null;
-    	boolean breakflag = false;
-    	for (Edge edgeG : G.edges()){ 
-    		breakflag = false;
+    	/**
+    	System.out.println();
+    	System.out.println("remaining edges:");
+    	for (Edge edge: remainingEdges){
+    		System.out.println("edge: {" + edge.either() + ", " + edge.other(edge.either()) + "} " + edge.weight());
+    	}
+    	System.out.println();
+    	System.out.println("t1 edges:");
+    	for (Edge edge: t1){
+    		System.out.println("t1 edges: {" + edge.either() + ", " + edge.other(edge.either()) + "} " + edge.weight());
+    	}
+    	System.out.println();
+    	System.out.println("t2 edges:");
+    	for (Edge edge: t2){
+    		System.out.println("t2 edges: {" + edge.either() + ", " + edge.other(edge.either()) + "} " + edge.weight());
+    	}
+    	**/
+    	for (Edge edge : remainingEdges){ 
     		for (Edge edgeT1 : t1){
-    			if (edgeG.compareTo(edgeT1) == 0){
-    				breakflag = true;
-    				break;
-    			}
-    		}
-    		if (breakflag == true){
-    			continue;
-    		}
-    		for (Edge edgeT2 : t2){
-    			if (edgeG.compareTo(edgeT2) == 0){
-    				breakflag = true;
-    				break;
-    			}
-    		}
-    		if (breakflag == true){
-    			continue;
-    		}
-    		
-    		
     			for (Edge edgeT2 : t2){
-    				//if they have the same weight then they are the same edge
-    				if ((edgeG.compareTo(edgeT1) == 0 || edgeG.compareTo(edgeT2) == 0)){
-    					continue;
-    				}
-    				//if edgeG is a crossing edge
-    				if ((edgeG.either() == edgeT1.other(edgeT1.either()) && edgeG.other(edgeG.either()) == edgeT2.either()) || 
-    						((edgeG.other(edgeG.either()) == edgeT1.either() && edgeG.either() == edgeT2.other(edgeT2.either())))){
+    				/**
+    				System.out.println("edge: {" + edge.either() + ", " + edge.other(edge.either()) + "} " + edge.weight());
+    				System.out.println("T1: {" + edgeT1.either() + ", " + edgeT1.other(edgeT1.either()) + "} " + edgeT1.weight());
+    				System.out.println("T2: {" + edgeT2.either() + ", " + edgeT2.other(edgeT2.either()) + "} " + edgeT2.weight());
+    				**/
+    				//if edge is a crossing edge
+    				if (((edge.either() == edgeT1.other(edgeT1.either()) || edge.either() == edgeT1.either()) && (edge.other(edge.either()) == edgeT2.either() || edge.other(edge.either()) == edgeT2.other(edgeT2.either())) || 
+    						((edge.either() == edgeT2.other(edgeT2.either()) || edge.either() == edgeT2.either()) && (edge.other(edge.either()) == edgeT1.either() || edge.other(edge.either()) == edgeT1.other(edgeT1.either()))))) {
+    					/** System.out.println("edgeG is a crossing edge!"); **/
     					//maintain shortest crossing edge estimate
     					if(tempShortest == null){
-    						if (edgeG.either() == e.either() && edgeG.other(edgeG.either()) == e.other(e.either())){
+    						//if edgeG is edge e
+    						if ((edge.either() == e.either() && edge.other(edge.either()) == e.other(e.either())) || (edge.either() == e.other(e.either()) && edge.other(edge.either()) == e.either())){
         						tempShortest = e;
+        						/**
+        						System.out.println("tempShortest was null and is now e");
+        						System.out.println(e.weight());
+        						**/
     						}
     						else{
-        						tempShortest = edgeG;
+        						tempShortest = edge;
+        						/**
+        						System.out.println("tempShortest was null and is now edge");
+        						System.out.println(e.weight());
+        						**/
     						}
     					}
+    					//tempShortest is an edge
     					else{
-    						if (edgeG.either() == e.either() && edgeG.other(edgeG.either()) == e.other(e.either())){
+    						//if edge is edge e
+    						if ((edge.either() == e.either() && edge.other(edge.either()) == e.other(e.either())) || (edge.either() == e.other(e.either()) && edge.other(edge.either()) == e.either())){
     							if(tempShortest.compareTo(e) > 0){
         							tempShortest = e;
+        							/**
+        							System.out.println("tempShortest has been update to e");
+        							System.out.println(e.weight());
+        							**/
         						}
     						}
     						else{
-        						if(tempShortest.compareTo(edgeG) > 0){
-        							tempShortest = edgeG;
+        						if(tempShortest.compareTo(edge) > 0){
+        							tempShortest = edge;
+        							/**
+        							System.out.println("tempShortest has been update to edge");
+        							System.out.println(e.weight());
+        							**/
         						}
     						}
 
@@ -276,35 +305,86 @@ public class AdaptiveMST {
 
     }
     
-    public static ArrayList<Edge> dfsParents(PrimMST t, Edge e){
+    private static ArrayList<Edge> getRemaining(EdgeWeightedGraph G, ArrayList<Edge> t1, ArrayList<Edge> t2) {
+    	ArrayList<Edge> remaining = new ArrayList<Edge>();
+    	boolean breakFlag = false;
+    	//size of t2 may be 0
+    	//size of t1 can never be zero due to how it is produced
+    	if (t2.size() == 0){
+    		System.out.println("t2: " + t2.size());
+    	}
+    	else{
+	    	for (Edge edgeG : G.edges()){
+	    		for (Edge edgeT1 : t1){
+	    			//if edgeT is in t1
+	    			if (edgeG.compareTo(edgeT1) == 0){
+	    				breakFlag = true;
+	    				break;
+	    			}
+	    		}
+	    		//check flag
+	    		if (breakFlag == true){
+	    			breakFlag = false;
+	    			continue;
+	    		}
+	    		
+	    		for (Edge edgeT2 : t2){
+	    			//if edgeT is in t2
+	    			if (edgeG.compareTo(edgeT2) == 0){
+	    				breakFlag = true;
+	    				break;
+	    			}
+	    		}
+	    		//check flag
+	    		if (breakFlag == true){
+	    			breakFlag = false;
+	    			continue;
+	    		}
+	    		
+	    		//if at this point, edgeT is not in t1 or t2
+	    		remaining.add(edgeG);
+	    	}
+    	}	
+		return remaining;
+    	
+	}
+
+	//this method takes in an ArrayList of edges, and a sub-ArrayList of the other ArrayList, and returns the difference
+    private static ArrayList<Edge> getDiff(ArrayList<Edge> full, ArrayList<Edge> partial) {
+		ArrayList<Edge> tDiff = new ArrayList<Edge>();
+		boolean alreadyInPartial = false;
+		
+		for (Edge edgeFromFull : full){
+			for (Edge edgeFromPartial : partial){
+				if (edgeFromFull.compareTo(edgeFromPartial) == 0){
+					alreadyInPartial = true;
+					break;
+				}
+			}
+			if(!alreadyInPartial){
+				tDiff.add(edgeFromFull);
+			}
+			
+			alreadyInPartial = false;
+		}
+		return tDiff;
+	}
+
+	public static ArrayList<Edge> dfs(ArrayList<Edge> tWithoutE, Edge currentE){
     	ArrayList<Edge> tPrime = new ArrayList<Edge>();
+    	currentE.setVisited(true);
     	//find parents
-    	for (Edge edge : t.edges()){
-    		if (edge.other(edge.either()) == e.either() || edge.either() == e.either()){
-    			if(!edge.isVisited()){
-    				System.out.println("hi parents");
-        			tPrime.add(edge);
-        			edge.setVisited(true);
-        			tPrime.addAll(dfsParents(t, edge));
-    			}	
+    	for (Edge edge : tWithoutE){
+    		//if connected to current edge
+    		if (edge.either() == currentE.either() || edge.either() == currentE.other(currentE.either()) 
+    				|| edge.other(edge.either()) == currentE.either() || edge.other(edge.either()) == currentE.other(currentE.either())){
+    			//if unvisited
+    			if (!edge.isVisited()){
+        			tPrime.addAll(dfs(tWithoutE, edge));
+    			}
     		}
     	}
-    	return tPrime;
-    }
-    
-    public static ArrayList<Edge> dfsChildren(PrimMST t, Edge e){
-    	ArrayList<Edge> tPrime = new ArrayList<Edge>();
-    	//find children
-    	for (Edge edge : t.edges()){
-    		if (edge.either() == e.other(e.either()) || edge.other(edge.either()) == e.other(e.either())){
-    			if(!edge.isVisited()){
-    				System.out.println("hi parents");
-        			tPrime.add(edge);
-        			edge.setVisited(true);
-        			tPrime.addAll(dfsParents(t, edge));
-    			}	
-    		}
-    	}
+    	tPrime.add(currentE);
     	return tPrime;
     }
 
