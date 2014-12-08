@@ -30,12 +30,12 @@ import std.In;
 public class AdaptiveMST {
   
 
-    /*
+    /**
       REQUIRES: T is a minimum spaning tree for G, e is an edge over the vertices of G,
          interpreted as a modification of G.
          other assumption are in force (see program spec)
       EFFECTS: writes to standard output the changes in T due to the modifiation e
-    */
+    **/
 
     // STUB VERSION:  right now this doesn't do anything but echo the input.
     //  Get rid of these printlns !
@@ -154,9 +154,12 @@ public class AdaptiveMST {
     	}     
     }
 
-    //This function adds the given edge to the given minimum spanning tree.  This forms a cycle within
-    //the tree.  The function then finds this cycle and removes the edge within the cycle with
-    //the largest weighted edge. It then returns this removed edge.
+    
+    /** 
+     * This function adds the given edge to the given minimum spanning tree.  This forms a cycle within
+     * the tree.  The function then finds this cycle and removes the edge within the cycle with
+     * the largest weighted edge. It then returns this removed edge.
+    **/
     private static Edge findRemovedEdge(EdgeWeightedGraph G, PrimMST t, Edge e) {
 		//Create a temporary edge weighted graph using the minimum spanning tree
     	EdgeWeightedGraph temp = t.toEdgeWeightGraph();
@@ -201,12 +204,12 @@ public class AdaptiveMST {
 		return maxEdge;
 	}
 
-	/*
-      REQUIRES: a string consisting of 3 tokens representing two ints and a double.
-      RETURNS:  a weighted edge built from this data.
-      EFFECTS: in addition to number format exceptions, can throw an
-          IllegalArgumentException if input is not 3 tokens,
-    */
+	/**
+	 * REQUIRES: a string consisting of 3 tokens representing two ints and a double.
+	 * RETURNS:  a weighted edge built from this data.
+	 * EFFECTS: in addition to number format exceptions, can throw an
+	 * IllegalArgumentException if input is not 3 tokens,
+    **/
     public static Edge makeEdge(String inline) 
         throws IllegalArgumentException, NumberFormatException
     {
@@ -222,19 +225,27 @@ public class AdaptiveMST {
         return new Edge(x,y, weight);
     }
     
+    /**
+     * 
+     * @param G is the original EdgeWeightedGraph
+     * @param t is the original MST
+     * @param e is the updated (increased) edge within the MST
+     * @return the least weighted connection edge after e is updated
+     */
     public static Edge findMinCrossing(EdgeWeightedGraph G, PrimMST t, Edge e){
     	ArrayList<Edge> t1 = new ArrayList<Edge>();
     	ArrayList<Edge> t2 = new ArrayList<Edge>();
     	ArrayList<Edge> tWithoutE = new ArrayList<Edge>();
     	ArrayList<Edge> remainingEdges = new ArrayList<Edge>();
-    	
-    	//dfs to determine edges in trees
-    	
+
+    	//removed e from MST
     	for (Edge edge : t.edges()){
     		if (edge.either() != e.either() || edge.other(edge.either()) != e.other(e.either())){
     			tWithoutE.add(edge);
     		}
     	}
+    	
+    	//dfs to determine edges in trees
     	//determine tree1
     	t1 = dfs(tWithoutE, tWithoutE.get(0));
     	//determine tree2
@@ -272,51 +283,20 @@ public class AdaptiveMST {
 
     	//determine minimum crossing edge
     	Edge tempShortest = null;
-    	/**
-    	System.out.println();
-    	System.out.println("remaining edges:");
-    	for (Edge edge: remainingEdges){
-    		System.out.println("edge: {" + edge.either() + ", " + edge.other(edge.either()) + "} " + edge.weight());
-    	}
-    	System.out.println();
-    	System.out.println("t1 edges:");
-    	for (Edge edge: t1){
-    		System.out.println("t1 edges: {" + edge.either() + ", " + edge.other(edge.either()) + "} " + edge.weight());
-    	}
-    	System.out.println();
-    	System.out.println("t2 edges:");
-    	for (Edge edge: t2){
-    		System.out.println("t2 edges: {" + edge.either() + ", " + edge.other(edge.either()) + "} " + edge.weight());
-    	}
-    	**/
     	for (Edge edge : remainingEdges){ 
     		for (Edge edgeT1 : t1){
     			for (Edge edgeT2 : t2){
-    				/**
-    				System.out.println("edge: {" + edge.either() + ", " + edge.other(edge.either()) + "} " + edge.weight());
-    				System.out.println("T1: {" + edgeT1.either() + ", " + edgeT1.other(edgeT1.either()) + "} " + edgeT1.weight());
-    				System.out.println("T2: {" + edgeT2.either() + ", " + edgeT2.other(edgeT2.either()) + "} " + edgeT2.weight());
-    				**/
     				//if edge is a crossing edge
     				if (((edge.either() == edgeT1.other(edgeT1.either()) || edge.either() == edgeT1.either()) && (edge.other(edge.either()) == edgeT2.either() || edge.other(edge.either()) == edgeT2.other(edgeT2.either())) || 
     						((edge.either() == edgeT2.other(edgeT2.either()) || edge.either() == edgeT2.either()) && (edge.other(edge.either()) == edgeT1.either() || edge.other(edge.either()) == edgeT1.other(edgeT1.either()))))) {
-    					/** System.out.println("edgeG is a crossing edge!"); **/
     					//maintain shortest crossing edge estimate
     					if(tempShortest == null){
     						//if edgeG is edge e
     						if ((edge.either() == e.either() && edge.other(edge.either()) == e.other(e.either())) || (edge.either() == e.other(e.either()) && edge.other(edge.either()) == e.either())){
         						tempShortest = e;
-        						/**
-        						System.out.println("tempShortest was null and is now e");
-        						System.out.println(e.weight());
-        						**/
     						}
     						else{
         						tempShortest = edge;
-        						/**
-        						System.out.println("tempShortest was null and is now edge");
-        						System.out.println(e.weight());
-        						**/
     						}
     					}
     					//tempShortest is an edge
@@ -325,19 +305,11 @@ public class AdaptiveMST {
     						if ((edge.either() == e.either() && edge.other(edge.either()) == e.other(e.either())) || (edge.either() == e.other(e.either()) && edge.other(edge.either()) == e.either())){
     							if(tempShortest.compareTo(e) > 0){
         							tempShortest = e;
-        							/**
-        							System.out.println("tempShortest has been update to e");
-        							System.out.println(e.weight());
-        							**/
         						}
     						}
     						else{
         						if(tempShortest.compareTo(edge) > 0){
         							tempShortest = edge;
-        							/**
-        							System.out.println("tempShortest has been update to edge");
-        							System.out.println(e.weight());
-        							**/
         						}
     						}
 
@@ -351,6 +323,13 @@ public class AdaptiveMST {
 
     }
     
+    /**
+     * 
+     * @param g is the original EdgeWeightedGraph
+     * @param e is the updated (increased) edge within the MST
+     * @param vertice is a lonely vertice, abandoned when edge e was removed from the MST
+     * @return
+     */
     //find the minimum connector edge from lonely vertice to rest
     private static Edge findMinConnection(EdgeWeightedGraph g, Edge e, int vertice) {
 		//temp variable for update minEdge
@@ -388,6 +367,14 @@ public class AdaptiveMST {
     	return minEdge;
 	}
 
+    /**
+     * 
+     * @param G is the original list of EdgeWeightedGraph
+     * @param t1 is the list of edges pertaining to tree1
+     * @param t2 is the list of edges pertaining to tree2
+     * @param e is the removed edge from the MST, causing the formation of t1 and t2
+     * @return the remaining edges in G after removing t1, t2, and e
+     */
 	private static ArrayList<Edge> getRemaining(EdgeWeightedGraph G, ArrayList<Edge> t1, ArrayList<Edge> t2, Edge e) {
     	ArrayList<Edge> remaining = new ArrayList<Edge>();
     	boolean breakFlag = false;
@@ -426,6 +413,12 @@ public class AdaptiveMST {
     	
 	}
 
+	/**
+	 * 
+	 * @param full is an ArrayList of edges
+	 * @param partial is a subset of the full ArrayList
+	 * @return an ArrayList comprised of the difference between the full and partial ArrayLists
+	 */
 	//this method takes in an ArrayList of edges, and a sub-ArrayList of the other ArrayList, and returns the difference
     private static ArrayList<Edge> getDiff(ArrayList<Edge> full, ArrayList<Edge> partial) {
 		ArrayList<Edge> tDiff = new ArrayList<Edge>();
@@ -447,6 +440,12 @@ public class AdaptiveMST {
 		return tDiff;
 	}
 
+    /**
+     * 
+     * @param tWithoutE is the remaining trees after removing edge e from MST t
+     * @param currentE is the current edge being examined in a tree
+     * @return an ArrayList of edges that make up one of the trees in tWithoutE
+     */
 	public static ArrayList<Edge> dfs(ArrayList<Edge> tWithoutE, Edge currentE){
     	ArrayList<Edge> tPrime = new ArrayList<Edge>();
     	currentE.setVisited(true);
@@ -465,6 +464,11 @@ public class AdaptiveMST {
     	return tPrime;
     }
 
+	/**
+	 * main
+	 * @throws IOException
+	 * @throws IllegalArgumentException
+	 */
     public static void main(String[] args) throws IOException, IllegalArgumentException {
 
         // Read original graph from a file
