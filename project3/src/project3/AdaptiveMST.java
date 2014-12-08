@@ -42,11 +42,16 @@ public class AdaptiveMST {
 	//TODO
     public static void treeChanges(EdgeWeightedGraph G, PrimMST t,
                                    Edge e) {
-    	boolean updatedEdge = false;
-        Edge original = null;
-    	for (Edge edge : G.edges()){
-    		int v = edge.either();
-    		int w = edge.other(v);
+    	boolean updatedEdge = false; //True if this edge already exists and is being updated
+        Edge original = null;			//The original edge, before being updated
+    	
+        //Search for the given edge in the given graph
+        for (Edge edge : G.edges()){
+    		int v = edge.either();			//One node on the edge
+    		int w = edge.other(v);			//The other node on the edge
+    		
+    		//Are these edges the same? (Note, cannot use weight trick here because weight is
+    		//what is being updated
         	if (((v == e.either())
         			&&
         			(w == e.other(v)))
@@ -61,8 +66,11 @@ public class AdaptiveMST {
         	}
         }
     	
+        //If the edge exists in the graph, process either Case 1-4
     	if (updatedEdge){
-    		//Decide what the change is
+    		//Decide which case the change belongs to
+    		
+    		//Is the edge in the given minimum spanning tree?
     		boolean isInMST = false;
     		for (Edge edge : t.edges()){
     			if (((edge.either() == original.either())
@@ -88,6 +96,8 @@ public class AdaptiveMST {
     		{
     			//Case 3, create cycle and delete maximum weighted edge
     			Edge removed = findRemovedEdge(G, t, e);
+    			
+    			//Ensure the removed edge is not the updated edge
     			if (removed.compareTo(e) != 0)
     			{
     				int vr = removed.either();
@@ -109,7 +119,6 @@ public class AdaptiveMST {
     		//If the edge is in the MST and the weight has increased
     		else if (isInMST && ((e.weight() - original.weight()) > 0))
     		{
-    			System.out.println("Case 4");
     			//Case 4: consider the two trees obtained by removing edge from t
     			// find minimum-weight crossing edge and swap if less
     			Edge minCrossingEdge = findMinCrossing(G, t, e);
@@ -128,6 +137,8 @@ public class AdaptiveMST {
     	{
     		//Case 5: Add edge, consider cycle, remove maximum.
     		Edge removed = findRemovedEdge(G, t, e);
+    		
+    		//Ensure the removed edge is not the new edge
 			if (removed.compareTo(e) != 0)
 			{
 				int vr = removed.either();
@@ -143,20 +154,26 @@ public class AdaptiveMST {
     	}     
     }
 
+    //This function adds the given edge to the given minimum spanning tree.  This forms a cycle within
+    //the tree.  The function then finds this cycle and removes the edge within the cycle with
+    //the largest weighted edge. It then returns this removed edge.
     private static Edge findRemovedEdge(EdgeWeightedGraph G, PrimMST t, Edge e) {
-		EdgeWeightedGraph temp = t.toEdgeWeightGraph();
-		temp.addEdge(e);
+		//Create a temporary edge weighted graph using the minimum spanning tree
+    	EdgeWeightedGraph temp = t.toEdgeWeightGraph();
+		temp.addEdge(e);	//Add the given edge to create a cycle
 		
+		//These variables will be used to detect the cycles in the graph
 		Cycle cycleDetector = new Cycle(temp);
 		Iterable<Integer> cycle = cycleDetector.cycle();
 		ArrayList<Edge> cycleEdges = new ArrayList<Edge>();
 		Iterator<Integer> cycleIterator = cycle.iterator();
 		
+		//Convert the nodes in the detected cycle to edges and add them to a list
 		int previous = cycleIterator.next();
 		while (cycleIterator.hasNext()){
 			int w = cycleIterator.next();
 			Edge ed = G.getEdge(previous, w);
-			if (ed == null ||
+			if (ed == null ||			//null case is found in Case 5
 					(((ed.either() == e.either())
 					&&
 					(ed.other(ed.either()) == e.other(e.either())))
@@ -165,7 +182,7 @@ public class AdaptiveMST {
 					&&
 					(ed.other(ed.either()) == e.either()))))
 			{
-				cycleEdges.add(e);
+				cycleEdges.add(e);	//Add the updated edge, not the one found in the given graph
 			}
 			else{
 				cycleEdges.add(ed);
@@ -174,6 +191,7 @@ public class AdaptiveMST {
 			previous = w;
 		}
 		
+		//Find the maximum weighted edge in the cycle and return it.
 		Edge maxEdge = cycleEdges.get(0);
 		for (Edge ed : cycleEdges){
 			if (ed.weight() > maxEdge.weight()){
