@@ -221,8 +221,36 @@ public class AdaptiveMST {
     	t1 = dfs(tWithoutE, tWithoutE.get(0));
     	//determine tree2
     	t2 = getDiff(tWithoutE, t1);
+    	
+    	//size of t2 could be 0
+    	//size of t1 can never be zero due to how it is produced
+    	if (t2.size() == 0){
+    		System.out.println("t2: " + t2.size());
+    		//find lonely vertice
+    		boolean eVertice1Lonely = true;
+    		boolean eVertice2Lonely = true;
+    		for (Edge edgeT1 : t1){
+    			if (edgeT1.either() == e.either() || edgeT1.other(edgeT1.either()) == e.either()){
+    				//this vertice is not lonely
+    				eVertice1Lonely = false;
+    			}
+    			if (edgeT1.either() == e.other(e.either()) || edgeT1.other(edgeT1.either()) == e.other(e.either())){
+    				//this vertice is not lonely
+    				eVertice2Lonely = false;
+    			}    				
+    		}
+    		if (eVertice1Lonely){
+    			System.out.println(e.either() + " is lonely");
+    			return findMinConnection(G, e, e.either());
+    		}
+    		else {
+    			System.out.println(e.other(e.either()) + " is lonely");
+    			return findMinConnection(G, e, e.other(e.either()));
+    		}
+    	}
+    	
     	//create list of remaining edges
-    	remainingEdges = getRemaining(G, t1, t2);
+    	remainingEdges = getRemaining(G, t1, t2, e);
 
     	//determine minimum crossing edge
     	Edge tempShortest = null;
@@ -305,46 +333,77 @@ public class AdaptiveMST {
 
     }
     
-    private static ArrayList<Edge> getRemaining(EdgeWeightedGraph G, ArrayList<Edge> t1, ArrayList<Edge> t2) {
+    //find the minimum connector edge from lonely vertice to rest
+    private static Edge findMinConnection(EdgeWeightedGraph g, Edge e, int vertice) {
+		//temp variable for update minEdge
+    	Edge minEdge = null;
+    	for (Edge edgeG : g.edges()){
+    		//check if the edge connects to the lonely vertice 
+			if (edgeG.either() == vertice || edgeG.other(edgeG.either()) == vertice){
+				//if edgeG is e
+				if ((edgeG.either() == e.either() && edgeG.other(edgeG.either()) == e.other(e.either())) 
+						|| (edgeG.other(edgeG.either()) == e.either() && edgeG.either() == e.other(e.either()))){
+					if (minEdge == null){
+						//edgeG is e and minEdge was null
+						minEdge = e;
+					}
+					else{
+						if(minEdge.compareTo(e) > 0){
+							//edgeG is e and e is shortest
+							minEdge = e;
+						}
+					}
+				}
+				else{
+					//edgeG is not e
+					if (minEdge == null){
+						minEdge = edgeG;
+					}
+					else{
+						if(minEdge.compareTo(edgeG) > 0){
+							minEdge = edgeG;
+						}
+					}
+				}
+			}
+		}
+    	return minEdge;
+	}
+
+	private static ArrayList<Edge> getRemaining(EdgeWeightedGraph G, ArrayList<Edge> t1, ArrayList<Edge> t2, Edge e) {
     	ArrayList<Edge> remaining = new ArrayList<Edge>();
     	boolean breakFlag = false;
-    	//size of t2 may be 0
-    	//size of t1 can never be zero due to how it is produced
-    	if (t2.size() == 0){
-    		System.out.println("t2: " + t2.size());
+    	for (Edge edgeG : G.edges()){
+    		for (Edge edgeT1 : t1){
+    			//if edgeT is in t1
+    			if (edgeG.compareTo(edgeT1) == 0){
+    				breakFlag = true;
+    				break;
+    			}
+    		}
+    		//check flag
+    		if (breakFlag == true){
+    			breakFlag = false;
+    			continue;
+    		}
+    		
+    		for (Edge edgeT2 : t2){
+    			//if edgeT is in t2
+    			if (edgeG.compareTo(edgeT2) == 0){
+    				breakFlag = true;
+    				break;
+    			}
+    		}
+    		//check flag
+    		if (breakFlag == true){
+    			breakFlag = false;
+    			continue;
+    		}
+    		
+    		//if at this point, edgeT is not in t1 or t2
+    		remaining.add(edgeG);
     	}
-    	else{
-	    	for (Edge edgeG : G.edges()){
-	    		for (Edge edgeT1 : t1){
-	    			//if edgeT is in t1
-	    			if (edgeG.compareTo(edgeT1) == 0){
-	    				breakFlag = true;
-	    				break;
-	    			}
-	    		}
-	    		//check flag
-	    		if (breakFlag == true){
-	    			breakFlag = false;
-	    			continue;
-	    		}
-	    		
-	    		for (Edge edgeT2 : t2){
-	    			//if edgeT is in t2
-	    			if (edgeG.compareTo(edgeT2) == 0){
-	    				breakFlag = true;
-	    				break;
-	    			}
-	    		}
-	    		//check flag
-	    		if (breakFlag == true){
-	    			breakFlag = false;
-	    			continue;
-	    		}
-	    		
-	    		//if at this point, edgeT is not in t1 or t2
-	    		remaining.add(edgeG);
-	    	}
-    	}	
+    	
 		return remaining;
     	
 	}
