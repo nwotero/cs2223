@@ -22,7 +22,7 @@ public class EWDAM {
         this.E = 0;
         adj = new double[V][V];
         for (int i = 0; i < V; i++){
-        	for (int j = 0; i < V; i++){
+        	for (int j = 0; j < V; j++){
         		adj[i][j] = Double.NaN;
         	}
         }
