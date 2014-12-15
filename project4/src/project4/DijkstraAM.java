@@ -1,5 +1,23 @@
 package project4;
 
+/*
+ * 
+ * 
+ * Donald Bourque, Nicholas Otero
+ * CS 2223 Project 4
+ * DijkstraAM
+ * 
+ * This class performs Dijkstra's algorithm in O(V^2) time. The justification
+ * for this time complexity is as follows:
+ * 
+ * Let V be the number of nodes in the graph. In the worst case, the number of
+ * edges will be V-1.  The algorithm will examine each node in order of lowest distance estimate 
+ * and relax all of its adjacent edges.  Finding the minimum distance takes O(V) time and relaxing 
+ * an edge takes constant time.  This means that there will be a V time penalty and a constant time 
+ * penalty relaxing  V - 1 edges for V nodes. This yields an asymptotic time complexity 
+ * of c * V * ((V - 1) + V) or O(V^2)
+ */
+
 import java.util.ArrayList;
 import java.util.Stack;
 
