@@ -103,8 +103,10 @@ public class DijkstraAM {
 		while (!nodeList.isEmpty()) {
 			int v = PopMinNode();
 			for (DirectedEdge e : G.adj(v))
-				relax(e);
-		}
+				if (!Double.isNaN(e.weight())){
+					relax(e);
+				}
+			}
 
 		// check optimality conditions
 		assert check(G, s);
@@ -244,7 +246,7 @@ public class DijkstraAM {
 	}
 
 	/**
-	 * Unit tests the <tt>DijkstraSP</tt> data type.
+	 * Unit tests the <tt>DijkstraAM</tt> data type.
 	 */
 	public static void main(String[] args) {
 		In in = new In(args[0]);
